@@ -1,8 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #2c4f2b;
+  /* Forest Green Base */
+  --foreground: #f9edd8;
+  /* Cream Text */
 }
 
 @theme inline {
@@ -10,12 +12,18 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Custom Christmas Palette */
+  --color-christmas-cream: #f9edd8;
+  --color-christmas-green: #2c4f2b;
+  --color-christmas-red: #b33626;
+  --color-christmas-brown: #6b4423;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #f9edd8;
+    --foreground: #2c4f2b;
   }
 }
 
@@ -23,4 +31,40 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+@keyframes twinkle {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-twinkle {
+  animation: twinkle 3s ease-in-out infinite;
+}
+
+@keyframes snowfall {
+  0% {
+    transform: translateY(-10vh) translateX(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(100vh) translateX(20px);
+    opacity: 0.8;
+  }
+}
+
+.snowflake {
+  top: -10px;
+  animation-name: snowfall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  color: white;
 }
