@@ -51,7 +51,7 @@ export default function LeaderboardClient({ leaderboard, currentUserId }: { lead
               <div className="bg-white rounded-xl border-2 border-gray-300 p-4 text-center w-32">
                 <div className="font-bold text-christmas-green truncate">{leaderboard[1]?.name}</div>
                 <div className="text-2xl font-bold text-christmas-red">{leaderboard[1]?.stats.score}</div>
-                <div className="text-xs text-christmas-green/60">{leaderboard[1]?.stats.solved} solved</div>
+                <div className="text-xs text-christmas-green/60">{leaderboard[1]?.stats.solved} {t.solved.toLowerCase()}</div>
               </div>
               <div className="h-16 w-24 bg-gray-200 rounded-t-lg mt-2" />
             </div>
@@ -61,7 +61,7 @@ export default function LeaderboardClient({ leaderboard, currentUserId }: { lead
               <div className="bg-white rounded-xl border-2 border-yellow-400 p-4 text-center w-36 shadow-lg shadow-yellow-100">
                 <div className="font-bold text-christmas-green truncate">{leaderboard[0]?.name}</div>
                 <div className="text-3xl font-bold text-christmas-red">{leaderboard[0]?.stats.score}</div>
-                <div className="text-xs text-christmas-green/60">{leaderboard[0]?.stats.solved} solved</div>
+                <div className="text-xs text-christmas-green/60">{leaderboard[0]?.stats.solved} {t.solved.toLowerCase()}</div>
               </div>
               <div className="h-24 w-28 bg-yellow-100 rounded-t-lg mt-2" />
             </div>
@@ -71,7 +71,7 @@ export default function LeaderboardClient({ leaderboard, currentUserId }: { lead
               <div className="bg-white rounded-xl border-2 border-orange-300 p-4 text-center w-32">
                 <div className="font-bold text-christmas-green truncate">{leaderboard[2]?.name}</div>
                 <div className="text-2xl font-bold text-christmas-red">{leaderboard[2]?.stats.score}</div>
-                <div className="text-xs text-christmas-green/60">{leaderboard[2]?.stats.solved} solved</div>
+                <div className="text-xs text-christmas-green/60">{leaderboard[2]?.stats.solved} {t.solved.toLowerCase()}</div>
               </div>
               <div className="h-12 w-24 bg-orange-100 rounded-t-lg mt-2" />
             </div>
@@ -86,7 +86,7 @@ export default function LeaderboardClient({ leaderboard, currentUserId }: { lead
                 <th className="px-4 py-3 font-medium">{t.rank}</th>
                 <th className="px-4 py-3 font-medium">{t.hacker}</th>
                 <th className="px-4 py-3 font-medium text-center">{t.solved}</th>
-                <th className="px-4 py-3 font-medium text-center">Avg</th>
+                <th className="px-4 py-3 font-medium text-center">{t.avg}</th>
                 <th className="px-4 py-3 font-medium text-center">{t.likes}</th>
                 <th className="px-4 py-3 font-medium text-right">{t.score}</th>
               </tr>
@@ -106,7 +106,7 @@ export default function LeaderboardClient({ leaderboard, currentUserId }: { lead
                   </td>
                   <td className="px-4 py-3 font-bold text-christmas-green">
                     {user.name}
-                    {user.id === currentUserId && <span className="ml-2 text-xs text-christmas-red">(you)</span>}
+                    {user.id === currentUserId && <span className="ml-2 text-xs text-christmas-red">({t.you})</span>}
                   </td>
                   <td className="px-4 py-3 text-center">
                     <span className="bg-christmas-green/10 text-christmas-green px-2 py-0.5 rounded-full text-xs font-medium">
@@ -124,7 +124,7 @@ export default function LeaderboardClient({ leaderboard, currentUserId }: { lead
                   <td className="px-4 py-3 text-right">
                     <div className="font-bold text-christmas-red text-lg">{user.stats.score}</div>
                     {user.stats.bonusPoints > 0 && (
-                      <div className="text-xs text-christmas-green/50">+{user.stats.bonusPoints} bonus</div>
+                      <div className="text-xs text-christmas-green/50">+{user.stats.bonusPoints} {t.bonus}</div>
                     )}
                   </td>
                 </tr>
@@ -135,11 +135,11 @@ export default function LeaderboardClient({ leaderboard, currentUserId }: { lead
 
         {/* Scoring explanation */}
         <div className="mt-6 p-4 bg-white/50 rounded-xl border border-christmas-green/10 text-sm text-christmas-green/70">
-          <h3 className="font-bold text-christmas-green mb-2">📊 How scoring works:</h3>
+          <h3 className="font-bold text-christmas-green mb-2">📊 {t.scoringTitle}</h3>
           <ul className="list-disc list-inside space-y-1">
-            <li>Each completed challenge gives you 0-100 points based on your result</li>
-            <li>Each ♥ like on your submissions gives +5 bonus points</li>
-            <li>Total Score = Sum of all challenge scores + bonus points</li>
+            <li>{t.scoringChallenge}</li>
+            <li>{t.scoringLikes}</li>
+            <li>{t.scoringTotal}</li>
           </ul>
         </div>
       </main>

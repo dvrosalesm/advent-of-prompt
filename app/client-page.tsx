@@ -77,7 +77,7 @@ export default function HomeClient({ sessionName, allChallenges, completedChalle
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 perspective-1000 pb-12">
+      <main className="max-w-6xl mx-auto flex flex-wrap justify-center gap-6 perspective-1000 pb-12">
         {allChallenges.map((challenge) => {
           const isCompleted = completedChallengeIds.has(challenge.id);
           const title = language === "es" ? challenge.titleEs : challenge.title;
@@ -86,7 +86,7 @@ export default function HomeClient({ sessionName, allChallenges, completedChalle
             <Link
               key={challenge.id}
               href={`/challenge/${challenge.day}`}
-              className={`relative aspect-[4/5] group transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 ${isCompleted ? 'z-0' : 'z-10'}`}
+              className={`relative aspect-[4/5] w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] lg:w-[calc(20%-19.2px)] group transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 ${isCompleted ? 'z-0' : 'z-10'}`}
             >
               {/* Card Container */}
               <div className={`absolute inset-0 rounded-xl shadow-lg overflow-hidden border-2 transition-all duration-300 ${isCompleted

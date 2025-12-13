@@ -25,6 +25,13 @@ export type Dictionary = {
   hacker: string;
   likes: string;
   score: string;
+  avg: string;
+  bonus: string;
+  you: string;
+  scoringTitle: string;
+  scoringChallenge: string;
+  scoringLikes: string;
+  scoringTotal: string;
   login: {
     title: string;
     subtitle: string;
@@ -63,6 +70,13 @@ export const en: Dictionary = {
   hacker: "Hacker",
   likes: "Likes",
   score: "Score",
+  avg: "Avg",
+  bonus: "bonus",
+  you: "you",
+  scoringTitle: "How scoring works:",
+  scoringChallenge: "Each completed challenge gives you 0-100 points based on your result",
+  scoringLikes: "Each ♥ like on your submissions gives +5 bonus points",
+  scoringTotal: "Total Score = Sum of all challenge scores + bonus points",
   login: {
     title: "Advent of Prompt",
     subtitle: "Enter your details to join the challenge.",
@@ -101,6 +115,13 @@ export const es: Dictionary = {
   hacker: "Hacker",
   likes: "Me gusta",
   score: "Puntaje",
+  avg: "Prom",
+  bonus: "bonus",
+  you: "tú",
+  scoringTitle: "Cómo funciona el puntaje:",
+  scoringChallenge: "Cada desafío completado te da 0-100 puntos según tu resultado",
+  scoringLikes: "Cada ♥ me gusta en tus envíos te da +5 puntos bonus",
+  scoringTotal: "Puntaje Total = Suma de todos los puntajes + puntos bonus",
   login: {
     title: "Adviento de Prompt",
     subtitle: "Ingresa tus datos para unirte al desafío.",
