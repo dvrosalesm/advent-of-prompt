@@ -80,7 +80,7 @@ export async function generateText(
     model: google(model),
     prompt,
     system: systemPrompt,
-    maxTokens,
+    maxOutputTokens: maxTokens,
     temperature,
   });
 
@@ -115,7 +115,7 @@ export async function generateImage(
   options?: Partial<ImageGenerationOptions>
 ): Promise<ImageGenerationResult> {
   const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
-  
+
   if (!apiKey) {
     throw new Error("GOOGLE_GENERATIVE_AI_API_KEY is required for image generation");
   }
@@ -142,18 +142,18 @@ export async function generateImage(
   if (!response.ok) {
     const errorText = await response.text();
     console.error("Imagen API error:", errorText);
-    
+
     // Check for rate limit
     if (response.status === 429) {
       console.log("Imagen rate limited, trying Gemini fallback...");
     }
-    
+
     // Fallback: Try using Gemini 2.0 Flash with native image generation
     return generateImageWithGemini(prompt, options);
   }
 
   const data = await response.json();
-  
+
   const images = data.predictions?.map((pred: { bytesBase64Encoded: string }) => ({
     base64: pred.bytesBase64Encoded,
   })) || [];
@@ -182,7 +182,7 @@ async function generateImageWithGemini(
 ): Promise<ImageGenerationResult> {
   const maxRetries = 3;
   const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY || "");
-  
+
   // Use Gemini 2.0 Flash experimental which has image generation
   const model = genAI.getGenerativeModel({
     model: "gemini-2.0-flash-exp",
@@ -196,26 +196,24 @@ async function generateImageWithGemini(
     const result = await model.generateContent(
       `Generate an image based on this description: ${prompt}`
     );
-    
+
     const response = result.response;
     const parts = response.candidates?.[0]?.content?.parts || [];
-    
+
     const images: { base64?: string }[] = [];
-    
+
     for (const part of parts) {
-      // @ts-expect-error - inlineData structure
       if (part.inlineData?.data) {
         images.push({
-          // @ts-expect-error - inlineData structure
           base64: part.inlineData.data,
         });
       }
     }
-    
+
     if (images.length === 0) {
       throw new Error("No images generated");
     }
-    
+
     return {
       images,
       model: "gemini-2.0-flash-exp",
@@ -223,7 +221,7 @@ async function generateImageWithGemini(
   } catch (error: unknown) {
     const err = error as { status?: number; message?: string };
     console.error("Gemini image generation error:", error);
-    
+
     // Handle rate limiting with retry
     if (err.status === 429 && retryCount < maxRetries) {
       const waitTime = Math.pow(2, retryCount + 1) * 5000; // 10s, 20s, 40s
@@ -231,12 +229,12 @@ async function generateImageWithGemini(
       await sleep(waitTime);
       return generateImageWithGemini(prompt, options, retryCount + 1);
     }
-    
+
     // Check for rate limit error in message
     if (err.status === 429 || (err.message && err.message.includes("429"))) {
       throw new Error("Rate limit exceeded. Please wait a minute and try again. (Free tier limit reached)");
     }
-    
+
     throw new Error("Image generation failed. Please try again.");
   }
 }
@@ -336,11 +334,11 @@ Be fair but thorough. A score of 70+ means the generated image captures the esse
   ]);
 
   const content = result.response.text();
-  
+
   try {
     const cleaned = content.replace(/```json/g, "").replace(/```/g, "").trim();
     const parsed = JSON.parse(cleaned);
-    
+
     return {
       similarityScore: parsed.similarityScore || 0,
       reasoning: parsed.reasoning || "Could not analyze images",
@@ -367,15 +365,15 @@ export const ai = {
   // Text generation
   generateText,
   generateWithGemini,
-  
+
   // Image generation
   generateImage,
-  
+
   // Vision / Image analysis
   analyzeImage,
   analyzeImageFromUrl,
   compareImages,
-  
+
   // Constants
   DEFAULT_MODEL,
 };

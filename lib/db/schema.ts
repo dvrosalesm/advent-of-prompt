@@ -1,11 +1,11 @@
 import { sql, relations } from "drizzle-orm";
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { integer, pgTable, text, boolean, serial, timestamp } from "drizzle-orm/pg-core";
 
-export const users = sqliteTable("users", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
   email: text("email").notNull().unique(),
   name: text("name"),
-  createdAt: text("created_at")
+  createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 });
@@ -16,8 +16,8 @@ export const usersRelations = relations(users, ({ many }) => ({
   comments: many(comments),
 }));
 
-export const challenges = sqliteTable("challenges", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const challenges = pgTable("challenges", {
+  id: serial("id").primaryKey(),
   day: integer("day").notNull().unique(),
   title: text("title").notNull(),
   titleEs: text("title_es").notNull().default(""),
@@ -26,7 +26,7 @@ export const challenges = sqliteTable("challenges", {
   difficulty: text("difficulty").notNull(), // 'easy', 'medium', 'hard'
   difficultyEs: text("difficulty_es").notNull().default("Fácil"),
   validationLogic: text("validation_logic").notNull(), // System prompt for validation
-  createdAt: text("created_at")
+  createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 });
@@ -35,8 +35,8 @@ export const challengesRelations = relations(challenges, ({ many }) => ({
   submissions: many(submissions),
 }));
 
-export const submissions = sqliteTable("submissions", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const submissions = pgTable("submissions", {
+  id: serial("id").primaryKey(),
   userId: integer("user_id")
     .notNull()
     .references(() => users.id),
@@ -47,8 +47,8 @@ export const submissions = sqliteTable("submissions", {
   aiResponse: text("ai_response"),
   outputType: text("output_type").default("text").notNull(), // 'text' or 'image'
   score: integer("score").default(0).notNull(), // 0-100 score for the submission
-  isVerified: integer("is_verified", { mode: "boolean" }).default(false).notNull(),
-  createdAt: text("created_at")
+  isVerified: boolean("is_verified").default(false).notNull(),
+  createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 });
@@ -66,15 +66,15 @@ export const submissionsRelations = relations(submissions, ({ one, many }) => ({
   comments: many(comments),
 }));
 
-export const votes = sqliteTable("votes", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const votes = pgTable("votes", {
+  id: serial("id").primaryKey(),
   userId: integer("user_id")
     .notNull()
     .references(() => users.id),
   submissionId: integer("submission_id")
     .notNull()
     .references(() => submissions.id),
-  createdAt: text("created_at")
+  createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 });
@@ -90,8 +90,8 @@ export const votesRelations = relations(votes, ({ one }) => ({
   }),
 }));
 
-export const comments = sqliteTable("comments", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const comments = pgTable("comments", {
+  id: serial("id").primaryKey(),
   userId: integer("user_id")
     .notNull()
     .references(() => users.id),
@@ -99,7 +99,7 @@ export const comments = sqliteTable("comments", {
     .notNull()
     .references(() => submissions.id),
   content: text("content").notNull(),
-  createdAt: text("created_at")
+  createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 });

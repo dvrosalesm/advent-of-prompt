@@ -26,7 +26,7 @@ export default async function Home() {
         inArray(submissions.challengeId, challengeIds)
       )
     )
-    .all();
+;
 
   const completedChallengeIds = new Set(userSubmissions.map((s) => s.challengeId));
 

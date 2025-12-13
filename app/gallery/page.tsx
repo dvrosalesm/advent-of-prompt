@@ -42,14 +42,15 @@ export default async function GalleryPage() {
       const challenge = staticChallenges.find((c) => c.id === sub.challengeId);
       return {
         ...sub,
+        createdAt: sub.createdAt.toISOString(),
         challenge: challenge
           ? {
               day: challenge.day,
               title: challenge.title,
               titleEs: challenge.titleEs,
-              outputType: challenge.outputType,
+              outputType: challenge.outputType as string,
             }
-          : { day: 0, title: "Unknown", titleEs: "Desconocido", outputType: "text" as const },
+          : { day: 0, title: "Unknown", titleEs: "Desconocido", outputType: "text" as string },
       };
     });
 
