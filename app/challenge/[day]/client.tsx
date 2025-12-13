@@ -6,7 +6,124 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import type { Challenge } from "@/lib/challenges";
 
-type OutputType = "text" | "image" | "game" | "music" | "maze";
+type OutputType = "text" | "image" | "game" | "music" | "maze" | "photo";
+
+// Parse and render markdown-like description text
+function renderDescription(text: string) {
+  // Split into lines
+  const lines = text.split('\n');
+  
+  return lines.map((line, lineIndex) => {
+    // Process inline formatting
+    const processInline = (str: string): React.ReactNode[] => {
+      const parts: React.ReactNode[] = [];
+      let remaining = str;
+      let keyIndex = 0;
+      
+      while (remaining.length > 0) {
+        // Find the next formatting marker
+        const boldMatch = remaining.match(/\*\*(.+?)\*\*/);
+        const codeMatch = remaining.match(/`([^`]+)`/);
+        
+        // Find which comes first
+        let firstMatch: { type: 'bold' | 'code'; match: RegExpMatchArray } | null = null;
+        
+        if (boldMatch && codeMatch) {
+          if ((boldMatch.index ?? Infinity) < (codeMatch.index ?? Infinity)) {
+            firstMatch = { type: 'bold', match: boldMatch };
+          } else {
+            firstMatch = { type: 'code', match: codeMatch };
+          }
+        } else if (boldMatch) {
+          firstMatch = { type: 'bold', match: boldMatch };
+        } else if (codeMatch) {
+          firstMatch = { type: 'code', match: codeMatch };
+        }
+        
+        if (firstMatch) {
+          const idx = firstMatch.match.index ?? 0;
+          
+          // Add text before the match
+          if (idx > 0) {
+            parts.push(remaining.substring(0, idx));
+          }
+          
+          // Add the formatted element
+          if (firstMatch.type === 'bold') {
+            parts.push(
+              <strong key={`b-${lineIndex}-${keyIndex++}`} className="font-semibold text-christmas-green">
+                {firstMatch.match[1]}
+              </strong>
+            );
+          } else {
+            parts.push(
+              <code key={`c-${lineIndex}-${keyIndex++}`} className="px-1.5 py-0.5 bg-christmas-green/10 text-christmas-red rounded text-xs font-mono">
+                {firstMatch.match[1]}
+              </code>
+            );
+          }
+          
+          // Continue with the rest
+          remaining = remaining.substring(idx + firstMatch.match[0].length);
+        } else {
+          // No more matches, add the rest as plain text
+          parts.push(remaining);
+          break;
+        }
+      }
+      
+      return parts;
+    };
+    
+    // Empty line = spacing
+    if (line.trim() === '') {
+      return <div key={lineIndex} className="h-2" />;
+    }
+    
+    // Horizontal rule (---)
+    if (line.trim() === '---') {
+      return <hr key={lineIndex} className="my-2 border-christmas-green/20" />;
+    }
+    
+    // Bullet points (• or -)
+    if (line.trim().startsWith('•') || line.trim().startsWith('- ')) {
+      const content = line.trim().replace(/^[•-]\s*/, '');
+      return (
+        <div key={lineIndex} className="flex items-start gap-2 ml-2">
+          <span className="text-christmas-green/50 mt-0.5">•</span>
+          <span>{processInline(content)}</span>
+        </div>
+      );
+    }
+    
+    // Numbered items (1. or 1))
+    const numberedMatch = line.trim().match(/^(\d+)[.)]\s+(.+)/);
+    if (numberedMatch) {
+      return (
+        <div key={lineIndex} className="flex items-start gap-2 ml-2">
+          <span className="text-christmas-green/50 font-medium min-w-[1.5rem]">{numberedMatch[1]}.</span>
+          <span>{processInline(numberedMatch[2])}</span>
+        </div>
+      );
+    }
+    
+    // Headers with emojis at the start
+    if (/^[🎯📜🛠️🏗️🎉🔧💡🎮🎵🧩🖼️✨]/.test(line.trim())) {
+      return (
+        <div key={lineIndex} className="font-medium text-christmas-green mt-1">
+          {processInline(line.trim())}
+        </div>
+      );
+    }
+    
+    // Regular paragraph
+    return (
+      <div key={lineIndex}>
+        {processInline(line)}
+      </div>
+    );
+  });
+}
 
 type MusicNote = {
   pitch: string;
@@ -62,6 +179,12 @@ export default function ChallengeClient({ challenge }: { challenge: Challenge })
   const [currentPathIndex, setCurrentPathIndex] = useState(-1);
   const [isAnimatingPath, setIsAnimatingPath] = useState(false);
   const [mazeLoading, setMazeLoading] = useState(false);
+
+  // Photo upload state
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [photoData, setPhotoData] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   // Handle game win - this will be called from the iframe
   const handleGameWin = useCallback(async () => {
@@ -214,6 +337,40 @@ export default function ChallengeClient({ challenge }: { challenge: Challenge })
     setCurrentNoteIndex(-1);
   }, []);
 
+  // Handle photo file selection
+  const handlePhotoSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      setReasoning("Please select an image file.");
+      return;
+    }
+
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      setReasoning("Image is too large. Please select an image under 10MB.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const result = reader.result as string;
+      setPhotoPreview(result);
+      setPhotoData(result);
+    };
+    reader.readAsDataURL(file);
+  }, []);
+
+  // Clear photo
+  const clearPhoto = useCallback(() => {
+    setPhotoPreview(null);
+    setPhotoData(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    if (cameraInputRef.current) cameraInputRef.current.value = "";
+  }, []);
+
   const handleSubmit = async () => {
     setIsPending(true);
     setIsVerified(null);
@@ -230,15 +387,26 @@ export default function ChallengeClient({ challenge }: { challenge: Challenge })
     stopMusic();
 
     try {
+      // Prepare request body based on challenge type
+      let requestBody: Record<string, unknown>;
+      
+      if (isPhotoChallenge) {
+        requestBody = {
+          photoData: photoData,
+        };
+      } else {
+        requestBody = {
+          userPrompt: prompt,
+          // Include maze data for maze challenges
+          ...(isMazeChallenge && mazeData ? { mazeData } : {}),
+        };
+      }
+
       // Call the day-specific endpoint
       const response = await fetch(`/api/challenges/day-${challenge.day}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userPrompt: prompt,
-          // Include maze data for maze challenges
-          ...(isMazeChallenge && mazeData ? { mazeData } : {}),
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       const result = await response.json();
@@ -280,6 +448,7 @@ export default function ChallengeClient({ challenge }: { challenge: Challenge })
   const isGameChallenge = challenge.outputType === "game";
   const isMusicChallenge = challenge.outputType === "music";
   const isMazeChallenge = challenge.outputType === "maze";
+  const isPhotoChallenge = challenge.outputType === "photo";
 
   // Generate maze on mount for maze challenges
   useEffect(() => {
@@ -371,8 +540,10 @@ export default function ChallengeClient({ challenge }: { challenge: Challenge })
               {difficulty}
             </span>
           </div>
-          <div className="prose prose-zinc max-w-none text-christmas-green/80">
-            <p>{description}</p>
+          <div className="max-h-[30vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-christmas-green/20 scrollbar-track-transparent">
+            <div className="text-sm text-christmas-green/80 leading-relaxed space-y-0.5">
+              {renderDescription(description)}
+            </div>
           </div>
         </div>
 
@@ -394,53 +565,139 @@ export default function ChallengeClient({ challenge }: { challenge: Challenge })
           </div>
         )}
 
-        <div className="flex-1 flex flex-col bg-white rounded-xl border border-christmas-green/20 overflow-hidden">
-          <div className="p-3 bg-christmas-cream border-b border-christmas-green/10 flex items-center justify-between">
-            <span className="text-sm font-medium text-christmas-green">{t.yourPrompt}</span>
-            {isMazeChallenge && (
-              <span className="text-xs text-christmas-green/50">🧩 Write instructions for the AI to solve the maze</span>
-            )}
-            {isMusicChallenge && (
-              <span className="text-xs text-christmas-green/50">🎵 Describe a Christmas melody</span>
-            )}
-            {isGameChallenge && (
-              <span className="text-xs text-christmas-green/50">🎮 Describe any game you want to create</span>
-            )}
-            {isImageChallenge && (
-              <span className="text-xs text-christmas-green/50">💡 Describe the image you want to generate</span>
-            )}
+        {isPhotoChallenge ? (
+          /* Photo Upload Interface */
+          <div className="flex-1 flex flex-col bg-white rounded-xl border border-christmas-green/20 overflow-hidden">
+            <div className="p-3 bg-christmas-cream border-b border-christmas-green/10 flex items-center justify-between">
+              <span className="text-sm font-medium text-christmas-green">📸 Upload Your Photo</span>
+              <span className="text-xs text-christmas-green/50">Take a selfie or upload from your gallery</span>
+            </div>
+            
+            <div className="flex-1 p-6 flex flex-col items-center justify-center gap-6">
+              {/* Hidden file inputs */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoSelect}
+                className="hidden"
+              />
+              <input
+                ref={cameraInputRef}
+                type="file"
+                accept="image/*"
+                capture="user"
+                onChange={handlePhotoSelect}
+                className="hidden"
+              />
+
+              {photoPreview ? (
+                /* Photo Preview */
+                <div className="relative">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={photoPreview}
+                    alt="Your Christmas photo"
+                    className="max-h-[300px] w-auto rounded-xl shadow-lg object-contain"
+                  />
+                  <button
+                    onClick={clearPhoto}
+                    className="absolute -top-2 -right-2 w-8 h-8 bg-christmas-red text-white rounded-full flex items-center justify-center hover:bg-red-700 transition-all shadow-md"
+                    title="Remove photo"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ) : (
+                /* Upload Buttons */
+                <div className="flex flex-col items-center gap-4">
+                  <div className="text-6xl">📷</div>
+                  <p className="text-christmas-green/60 text-center">
+                    Share a photo of yourself celebrating Christmas!
+                  </p>
+                  <div className="flex gap-4 flex-wrap justify-center">
+                    <button
+                      onClick={() => cameraInputRef.current?.click()}
+                      className="px-6 py-3 bg-christmas-green text-white rounded-lg font-semibold hover:bg-green-700 transition-all flex items-center gap-2"
+                    >
+                      📸 Take Photo
+                    </button>
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      className="px-6 py-3 bg-christmas-cream text-christmas-green border-2 border-christmas-green/30 rounded-lg font-semibold hover:bg-christmas-green/10 transition-all flex items-center gap-2"
+                    >
+                      🖼️ Upload from Gallery
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="p-4 bg-christmas-cream border-t border-christmas-green/10 flex justify-end">
+              <button
+                onClick={handleSubmit}
+                disabled={isPending || !photoData}
+                className={`px-6 py-2 rounded-lg font-semibold text-white transition-all ${isPending
+                  ? "bg-zinc-400 cursor-not-allowed"
+                  : !photoData
+                    ? "bg-zinc-300 cursor-not-allowed"
+                    : "bg-christmas-red hover:bg-red-700"
+                  }`}
+              >
+                {isPending ? "📸 Analyzing..." : "🎄 Submit Photo"}
+              </button>
+            </div>
           </div>
-          <textarea
-            className="flex-1 bg-white p-4 resize-none focus:outline-none text-christmas-green font-mono text-sm placeholder:text-christmas-green/30 min-h-[150px]"
-            placeholder={isMazeChallenge
-              ? "Analyze the maze and find the path from S to E. Move step by step, checking for walls..."
-              : isMusicChallenge
-                ? "Describe your Christmas melody: jingle bells, silent night, a happy carol, a peaceful winter tune..."
-                : isGameChallenge
-                  ? "Describe your game: type (racing, platformer, shooter...), theme, mechanics, win condition..."
-                  : isImageChallenge 
-                    ? "Describe the image in detail: subjects, setting, style, colors, mood..."
-                    : "Enter your prompt here..."
-            }
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-          />
-          <div className="p-4 bg-christmas-cream border-t border-christmas-green/10 flex justify-end">
-            <button
-              onClick={handleSubmit}
-              disabled={isPending || !prompt.trim()}
-              className={`px-6 py-2 rounded-lg font-semibold text-white transition-all ${isPending
-                ? "bg-zinc-400 cursor-not-allowed"
-                : "bg-christmas-red hover:bg-red-700"
-                }`}
-            >
-              {isPending 
-                ? (isMazeChallenge ? "🧩 Solving..." : isMusicChallenge ? "🎵 Composing..." : isGameChallenge ? "🎮 Generating..." : isImageChallenge ? "🎨 Generating..." : t.processing)
-                : (isMazeChallenge ? "🧩 Solve Maze" : isMusicChallenge ? "🎵 Compose Melody" : isGameChallenge ? "🎮 Generate Game" : isImageChallenge ? "🎨 Generate & Compare" : t.runVerify)
+        ) : (
+          /* Standard Text Prompt Interface */
+          <div className="flex-1 flex flex-col bg-white rounded-xl border border-christmas-green/20 overflow-hidden">
+            <div className="p-3 bg-christmas-cream border-b border-christmas-green/10 flex items-center justify-between">
+              <span className="text-sm font-medium text-christmas-green">{t.yourPrompt}</span>
+              {isMazeChallenge && (
+                <span className="text-xs text-christmas-green/50">🧩 Write instructions for the AI to solve the maze</span>
+              )}
+              {isMusicChallenge && (
+                <span className="text-xs text-christmas-green/50">🎵 Describe a Christmas melody</span>
+              )}
+              {isGameChallenge && (
+                <span className="text-xs text-christmas-green/50">🎮 Describe any game you want to create</span>
+              )}
+              {isImageChallenge && (
+                <span className="text-xs text-christmas-green/50">💡 Describe the image you want to generate</span>
+              )}
+            </div>
+            <textarea
+              className="flex-1 bg-white p-4 resize-none focus:outline-none text-christmas-green font-mono text-sm placeholder:text-christmas-green/30 min-h-[150px]"
+              placeholder={isMazeChallenge
+                ? "Analyze the maze and find the path from S to E. Move step by step, checking for walls..."
+                : isMusicChallenge
+                  ? "Describe your Christmas melody: jingle bells, silent night, a happy carol, a peaceful winter tune..."
+                  : isGameChallenge
+                    ? "Describe your game: type (racing, platformer, shooter...), theme, mechanics, win condition..."
+                    : isImageChallenge 
+                      ? "Describe the image in detail: subjects, setting, style, colors, mood..."
+                      : "Enter your prompt here..."
               }
-            </button>
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+            />
+            <div className="p-4 bg-christmas-cream border-t border-christmas-green/10 flex justify-end">
+              <button
+                onClick={handleSubmit}
+                disabled={isPending || !prompt.trim()}
+                className={`px-6 py-2 rounded-lg font-semibold text-white transition-all ${isPending
+                  ? "bg-zinc-400 cursor-not-allowed"
+                  : "bg-christmas-red hover:bg-red-700"
+                  }`}
+              >
+                {isPending 
+                  ? (isMazeChallenge ? "🧩 Solving..." : isMusicChallenge ? "🎵 Composing..." : isGameChallenge ? "🎮 Generating..." : isImageChallenge ? "🎨 Generating..." : t.processing)
+                  : (isMazeChallenge ? "🧩 Solve Maze" : isMusicChallenge ? "🎵 Compose Melody" : isGameChallenge ? "🎮 Generate Game" : isImageChallenge ? "🎨 Generate & Compare" : t.runVerify)
+                }
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Right Panel: Output & Results */}
@@ -451,7 +708,7 @@ export default function ChallengeClient({ challenge }: { challenge: Challenge })
           }`}>
           <div className="p-3 border-b border-christmas-green/10 flex items-center justify-between bg-christmas-cream/50">
             <span className="text-sm font-medium text-christmas-green">
-              {outputType === "maze" ? "🧩 Maze Challenge" : outputType === "music" ? "🎵 Your Christmas Melody" : outputType === "game" ? "🎮 Your Game" : outputType === "image" ? "🖼️ Generated Image" : t.aiOutput}
+              {outputType === "maze" ? "🧩 Maze Challenge" : outputType === "music" ? "🎵 Your Christmas Melody" : outputType === "game" ? "🎮 Your Game" : outputType === "photo" ? "📸 Your Christmas Photo" : outputType === "image" ? "🖼️ Generated Image" : t.aiOutput}
             </span>
             <div className="flex items-center gap-3">
               {score !== null && (
@@ -475,7 +732,7 @@ export default function ChallengeClient({ challenge }: { challenge: Challenge })
               <div className="flex flex-col items-center gap-4 text-christmas-green/60">
                 <div className="w-12 h-12 border-4 border-christmas-green/20 border-t-christmas-red rounded-full animate-spin" />
                 <span className="text-sm">
-                  {isMazeChallenge ? "🧩 AI is solving the maze..." : isMusicChallenge ? "🎵 Composing your melody..." : isGameChallenge ? "🎮 Generating your game..." : isImageChallenge ? "Generating image with AI..." : "Processing..."}
+                  {isMazeChallenge ? "🧩 AI is solving the maze..." : isMusicChallenge ? "🎵 Composing your melody..." : isGameChallenge ? "🎮 Generating your game..." : isPhotoChallenge ? "📸 Analyzing your Christmas spirit..." : isImageChallenge ? "Generating image with AI..." : "Processing..."}
                 </span>
               </div>
             ) : mazeData || output ? (
@@ -655,6 +912,23 @@ export default function ChallengeClient({ challenge }: { challenge: Challenge })
                     title="Generated Game"
                   />
                 </div>
+              ) : outputType === "photo" ? (
+                <div className="relative flex flex-col items-center gap-4">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={output}
+                    alt="Your Christmas Photo"
+                    className="rounded-xl shadow-lg max-h-[400px] w-auto object-contain"
+                  />
+                  {isVerified && (
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <div className="bg-green-500/90 px-6 py-4 rounded-xl text-white text-center animate-bounce">
+                        <div className="text-4xl mb-2">🎄</div>
+                        <div className="font-bold text-lg">Merry Christmas!</div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               ) : outputType === "image" ? (
                 <div className="relative">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -671,7 +945,7 @@ export default function ChallengeClient({ challenge }: { challenge: Challenge })
               )
             ) : (
               <span className="text-christmas-green/40 italic">
-                {isMazeChallenge ? "🧩 Loading maze..." : isMusicChallenge ? "🎵 Your Christmas melody will appear here..." : isGameChallenge ? "🎮 Your game will appear here..." : isImageChallenge ? "Your generated image will appear here..." : "..."}
+                {isMazeChallenge ? "🧩 Loading maze..." : isMusicChallenge ? "🎵 Your Christmas melody will appear here..." : isGameChallenge ? "🎮 Your game will appear here..." : isPhotoChallenge ? "📸 Upload a photo to see your Christmas celebration!" : isImageChallenge ? "Your generated image will appear here..." : "..."}
               </span>
             )}
           </div>

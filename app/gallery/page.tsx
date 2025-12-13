@@ -61,13 +61,13 @@ export default async function GalleryPage() {
         <GalleryHeader />
       </header>
 
-      <main className="max-w-4xl mx-auto p-6 space-y-6">
+      <main className="w-full px-6 py-6 space-y-6">
         {submissionsWithChallenges.length === 0 ? (
           <div className="text-center py-12 text-christmas-green/60">
             <EmptyStateClient />
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {submissionsWithChallenges.map((sub) => (
               <SubmissionCard key={sub.id} submission={sub} currentUserId={session.userId} />
             ))}

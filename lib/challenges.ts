@@ -1,4 +1,4 @@
-export type ChallengeOutputType = "text" | "image" | "game" | "music" | "maze";
+export type ChallengeOutputType = "text" | "image" | "game" | "music" | "maze" | "photo";
 
 export type Challenge = {
   id: number;
@@ -155,12 +155,52 @@ Five golden rings shine bright above.
   {
     id: 8,
     day: 8,
-    title: "The Rhyming Recipe",
-    titleEs: "La Receta que Rima",
-    description:
-      "Create a recipe for chocolate chip cookies where every single line rhymes.",
-    descriptionEs:
-      "Crea una receta de galletas con chispas de chocolate donde cada línea rime.",
+    title: "Bob Builds",
+    titleEs: "Bob Construye",
+    description: `🏗️ THE RIDDANCE: "The Festival of Fair Shares"
+
+The town of Quinlan will open its winter festival only when these rules are satisfied:
+
+📜 **Festival Rules:**
+1. Exactly **one thing** is built for the festival, made only from forest materials
+2. The town receives **exactly 4 equal portions** when allocated
+3. You must leave the forest **empty-handed**: end with **0 loose materials**
+4. You may use **gather at most 3 times**
+5. A previous apprentice left behind **one broken relic** (a built thing from before)
+6. Festival law: "**Destroy exactly one item** to cleanse the ledger"
+
+🛠️ **Available Tools (exactly these five):**
+• \`gather\` - gathers 1 material from the forest
+• \`multiply\` - takes 1 material and produces 2 materials
+• \`build\` - takes 5 materials and builds 1 thing
+• \`allocate\` - distributes built things into 4 equal portions for the town
+• \`destroy\` - destroys a built thing or material
+
+Write a prompt that instructs the AI to output the exact sequence of tool calls needed to satisfy all rules!
+
+🎯 **Win Condition:** 1 built thing, 0 materials, 4 portions allocated, ≤3 gathers, exactly 1 destroy`,
+    descriptionEs: `🏗️ LA PURGA: "El Festival de Partes Iguales"
+
+El pueblo de Quinlan abrirá su festival de invierno solo cuando estas reglas se satisfagan:
+
+📜 **Reglas del Festival:**
+1. Exactamente **una cosa** se construye para el festival, hecha solo con materiales del bosque
+2. El pueblo recibe **exactamente 4 porciones iguales** al asignar
+3. Debes salir del bosque **con las manos vacías**: terminar con **0 materiales sueltos**
+4. Puedes usar **gather máximo 3 veces**
+5. Un aprendiz anterior dejó **una reliquia rota** (una cosa construida de antes)
+6. Ley del festival: "**Destruye exactamente un objeto** para limpiar el registro"
+
+🛠️ **Herramientas Disponibles (exactamente estas cinco):**
+• \`gather\` - recolecta 1 material del bosque
+• \`multiply\` - toma 1 material y produce 2 materiales
+• \`build\` - toma 5 materiales y construye 1 cosa
+• \`allocate\` - distribuye las cosas construidas en 4 porciones iguales para el pueblo
+• \`destroy\` - destruye una cosa construida o material
+
+¡Escribe un prompt que instruya a la IA a generar la secuencia exacta de llamadas de herramientas necesarias para satisfacer todas las reglas!
+
+🎯 **Condición de Victoria:** 1 cosa construida, 0 materiales, 4 porciones asignadas, ≤3 gathers, exactamente 1 destroy`,
     difficulty: "Hard",
     difficultyEs: "Difícil",
     outputType: "text",
@@ -168,25 +208,57 @@ Five golden rings shine bright above.
   {
     id: 9,
     day: 9,
-    title: "Emoji Translator",
-    titleEs: "Traductor de Emojis",
+    title: "ASCII Dragon",
+    titleEs: "Dragón ASCII",
     description:
-      "Translate the first paragraph of 'Pride and Prejudice' entirely into emojis.",
+      "🐉 ASCII ART CHALLENGE: Write a prompt that makes the AI generate an impressive ASCII art dragon! The dragon should be recognizable, detailed, and creative. An AI judge will evaluate if your dragon is worthy of a true dragon master!",
     descriptionEs:
-      "Traduce el primer párrafo de 'Orgullo y Prejuicio' enteramente a emojis.",
-    difficulty: "Hard",
-    difficultyEs: "Difícil",
+      "🐉 DESAFÍO DE ARTE ASCII: ¡Escribe un prompt que haga que la IA genere un impresionante dragón en arte ASCII! El dragón debe ser reconocible, detallado y creativo. ¡Un juez IA evaluará si tu dragón es digno de un verdadero maestro de dragones!",
+    difficulty: "Medium",
+    difficultyEs: "Medio",
     outputType: "text",
   },
   {
     id: 10,
     day: 10,
-    title: "The Silent Coder",
-    titleEs: "El Programador Silencioso",
-    description:
-      "Get the AI to write a Python 'Hello World' function without using the letter 'o' in the code.",
-    descriptionEs:
-      "Haz que la IA escriba una función 'Hello World' en Python sin usar la letra 'o' en el código.",
+    title: "New Language",
+    titleEs: "Nuevo Lenguaje",
+    description: `🗣️ PLSLANG CHALLENGE: Welcome to PlsLang - the world's most polite programming language!
+
+📖 **PlsLang Syntax Guide:**
+• \`this is X = 5\` → declare variable X with value 5
+• \`X more pls Y\` → addition (X + Y)
+• \`X less pls Y\` → subtraction (X - Y)
+• \`X times pls Y\` → multiplication (X * Y)
+• \`X split pls Y\` → division (X / Y)
+• \`again-pls N times do ... done-pls\` → loop N times
+• \`yell X\` → print X
+• \`gimme X\` → return X
+• \`thank you\` → end program
+
+🎯 **Your Mission:** Write a PlsLang program that calculates \`(x1 - x2 + x3 + x4 - x5)\` and repeats this calculation 100 times, accumulating the result!
+
+Use these values: x1=50, x2=10, x3=25, x4=15, x5=30
+
+The AI will translate your PlsLang code to JavaScript and execute it. The expected result is **5000** (since 50-10+25+15-30 = 50, and 50 × 100 = 5000).`,
+    descriptionEs: `🗣️ DESAFÍO PLSLANG: ¡Bienvenido a PlsLang - el lenguaje de programación más educado del mundo!
+
+📖 **Guía de Sintaxis PlsLang:**
+• \`this is X = 5\` → declarar variable X con valor 5
+• \`X more pls Y\` → suma (X + Y)
+• \`X less pls Y\` → resta (X - Y)
+• \`X times pls Y\` → multiplicación (X * Y)
+• \`X split pls Y\` → división (X / Y)
+• \`again-pls N times do ... done-pls\` → repetir N veces
+• \`yell X\` → imprimir X
+• \`gimme X\` → retornar X
+• \`thank you\` → fin del programa
+
+🎯 **Tu Misión:** ¡Escribe un programa PlsLang que calcule \`(x1 - x2 + x3 + x4 - x5)\` y repita este cálculo 100 veces, acumulando el resultado!
+
+Usa estos valores: x1=50, x2=10, x3=25, x4=15, x5=30
+
+La IA traducirá tu código PlsLang a JavaScript y lo ejecutará. El resultado esperado es **5000** (ya que 50-10+25+15-30 = 50, y 50 × 100 = 5000).`,
     difficulty: "Hard",
     difficultyEs: "Difícil",
     outputType: "text",
@@ -194,12 +266,38 @@ Five golden rings shine bright above.
   {
     id: 11,
     day: 11,
-    title: "Reverse Psychology",
-    titleEs: "Psicología Inversa",
-    description:
-      "Convince the AI that 2 + 2 = 5, and have it explain why that is true.",
-    descriptionEs:
-      "Convence a la IA de que 2 + 2 = 5, y haz que explique por qué es verdad.",
+    title: "Curious",
+    titleEs: "Curioso",
+    description: `🔮 WORD GUESSING CHALLENGE: The AI has chosen a secret word and will NEVER say it directly!
+
+📜 **Rules:**
+1. The AI has picked a **secret word** - it won't tell you what it is!
+2. You have **5 attempts** to guess the word correctly
+3. Ask the AI questions, request hints, or make guesses
+4. The AI will respond to help you, but it will NEVER say the secret word
+5. If you run out of attempts, a **new word** is chosen and you start over
+
+💡 **Tips:**
+• Ask clever questions like "Does it rhyme with...?" or "How many letters?"
+• Request descriptions, categories, or associations
+• The AI wants you to succeed - just can't say the word!
+
+🎯 **Win Condition:** Correctly guess the secret word within 5 attempts!`,
+    descriptionEs: `🔮 DESAFÍO DE ADIVINANZA: ¡La IA ha elegido una palabra secreta y NUNCA la dirá directamente!
+
+📜 **Reglas:**
+1. La IA ha elegido una **palabra secreta** - ¡no te dirá cuál es!
+2. Tienes **5 intentos** para adivinar la palabra correctamente
+3. Hazle preguntas a la IA, pide pistas o haz suposiciones
+4. La IA responderá para ayudarte, pero NUNCA dirá la palabra secreta
+5. Si te quedas sin intentos, se elige una **nueva palabra** y empiezas de nuevo
+
+💡 **Consejos:**
+• Haz preguntas ingeniosas como "¿Rima con...?" o "¿Cuántas letras tiene?"
+• Pide descripciones, categorías o asociaciones
+• ¡La IA quiere que tengas éxito - solo que no puede decir la palabra!
+
+🎯 **Condición de Victoria:** ¡Adivina correctamente la palabra secreta en 5 intentos!`,
     difficulty: "Medium",
     difficultyEs: "Medio",
     outputType: "text",
@@ -209,13 +307,35 @@ Five golden rings shine bright above.
     day: 12,
     title: "The Grand Finale",
     titleEs: "El Gran Final",
-    description:
-      "Prompt the AI to generate a congratulatory message for completing the Advent of Prompt, revealing a hidden 'flag' code: 'SANTA-AI-2024'.",
-    descriptionEs:
-      "Pide a la IA que genere un mensaje de felicitación por completar el Advent of Prompt, revelando un código 'flag' oculto: 'SANTA-AI-2024'.",
-    difficulty: "Hard",
-    difficultyEs: "Difícil",
-    outputType: "text",
+    description: `📸 CHRISTMAS SELFIE CHALLENGE: Share a photo of yourself celebrating Christmas!
+
+🎄 **How to participate:**
+1. Take a photo or upload one from your device
+2. Show yourself in a Christmas celebration moment
+3. The AI will verify your festive spirit!
+
+💡 **Tips for a great photo:**
+• Show Christmas decorations, a tree, or festive items
+• Wear something festive (Santa hat, ugly sweater, etc.)
+• Be creative - show your holiday spirit!
+
+🎯 **Win Condition:** Upload a photo that captures the Christmas celebration spirit!`,
+    descriptionEs: `📸 DESAFÍO DE SELFIE NAVIDEÑA: ¡Comparte una foto tuya celebrando la Navidad!
+
+🎄 **Cómo participar:**
+1. Toma una foto o sube una desde tu dispositivo
+2. Muéstrate en un momento de celebración navideña
+3. ¡La IA verificará tu espíritu festivo!
+
+💡 **Consejos para una gran foto:**
+• Muestra decoraciones navideñas, un árbol o artículos festivos
+• Usa algo festivo (gorro de Santa, suéter feo, etc.)
+• Sé creativo - ¡muestra tu espíritu navideño!
+
+🎯 **Condición de Victoria:** ¡Sube una foto que capture el espíritu de celebración navideña!`,
+    difficulty: "Easy",
+    difficultyEs: "Fácil",
+    outputType: "photo",
   },
 ];
 
