@@ -20,12 +20,12 @@
   --color-christmas-brown: #6b4423;
 }
 
-@media (prefers-color-scheme: dark) {
+
   :root {
     --background: #f9edd8;
     --foreground: #2c4f2b;
   }
-}
+
 
 body {
   background: var(--background);
