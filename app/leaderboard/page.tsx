@@ -21,20 +21,33 @@ export default async function LeaderboardPage() {
     },
   });
 
-  // Calculate scores
+  // Calculate scores - now using actual submission scores
   const leaderboard = usersData
     .map((user) => {
-      const challengePoints = user.submissions.length * 100;
-      const votePoints = user.submissions.reduce(
-        (acc, sub) => acc + sub.votes.length * 10,
+      // Sum of all submission scores (0-100 each)
+      const challengePoints = user.submissions.reduce(
+        (acc, sub) => acc + (sub.score || 0),
         0
       );
+      // Bonus points for votes received
+      const votePoints = user.submissions.reduce(
+        (acc, sub) => acc + sub.votes.length * 5,
+        0
+      );
+      // Average score per challenge
+      const avgScore = user.submissions.length > 0
+        ? Math.round(challengePoints / user.submissions.length)
+        : 0;
+      
       return {
         ...user,
         stats: {
           solved: user.submissions.length,
           likes: user.submissions.reduce((acc, sub) => acc + sub.votes.length, 0),
-          score: challengePoints + votePoints,
+          totalScore: challengePoints,
+          avgScore,
+          bonusPoints: votePoints,
+          score: challengePoints + votePoints, // Total score
         },
       };
     })

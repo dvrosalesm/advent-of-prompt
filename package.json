@@ -9,7 +9,10 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@ai-sdk/google": "^2.0.46",
+    "@ai-sdk/groq": "^2.0.33",
     "@ai-sdk/openai": "^2.0.68",
+    "@google/generative-ai": "^0.24.1",
     "@tailwindcss/typography": "^0.5.19",
     "ai": "^5.0.95",
     "better-sqlite3": "^12.4.1",
@@ -18,7 +21,8 @@
     "drizzle-kit": "^0.31.7",
     "drizzle-orm": "^0.44.7",
     "jose": "^6.1.2",
-    "next": "16.0.3",
+    "next": "^16.0.7",
+    "openai": "^6.10.0",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "tailwind-merge": "^3.4.0"

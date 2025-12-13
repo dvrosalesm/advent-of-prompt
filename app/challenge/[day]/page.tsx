@@ -1,11 +1,8 @@
 import { verifySession } from "@/lib/session";
 import { redirect, notFound } from "next/navigation";
-import { db } from "@/lib/db";
-import { challenges } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
 import ChallengeClient from "./client";
-import Link from "next/link";
 import { BackButton } from "./back-button";
+import { getChallengeByDay } from "@/lib/challenges";
 
 export default async function ChallengePage({
   params,
@@ -24,9 +21,7 @@ export default async function ChallengePage({
     notFound();
   }
 
-  const challenge = await db.query.challenges.findFirst({
-    where: eq(challenges.day, dayNum),
-  });
+  const challenge = getChallengeByDay(dayNum);
 
   if (!challenge) {
     notFound();

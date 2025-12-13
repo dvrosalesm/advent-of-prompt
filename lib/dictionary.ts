@@ -70,7 +70,7 @@ export const en: Dictionary = {
     namePlaceholder: "Display Name (e.g. PromptWizard)",
     emailLabel: "Email address",
     emailPlaceholder: "Email address",
-    cta: "Start Hacking",
+    cta: "Start building",
   },
 };
 
@@ -108,7 +108,7 @@ export const es: Dictionary = {
     namePlaceholder: "Nombre (ej. MagoDePrompts)",
     emailLabel: "Correo Electrónico",
     emailPlaceholder: "Correo Electrónico",
-    cta: "Empezar a Hackear",
+    cta: "Empezar a construir",
   },
 };
 

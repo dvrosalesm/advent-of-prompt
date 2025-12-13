@@ -45,6 +45,8 @@ export const submissions = sqliteTable("submissions", {
     .references(() => challenges.id),
   userPrompt: text("user_prompt").notNull(),
   aiResponse: text("ai_response"),
+  outputType: text("output_type").default("text").notNull(), // 'text' or 'image'
+  score: integer("score").default(0).notNull(), // 0-100 score for the submission
   isVerified: integer("is_verified", { mode: "boolean" }).default(false).notNull(),
   createdAt: text("created_at")
     .default(sql`CURRENT_TIMESTAMP`)

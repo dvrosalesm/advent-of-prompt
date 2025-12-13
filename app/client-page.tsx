@@ -3,7 +3,7 @@
 import { useLanguage } from "@/components/language-provider";
 import { LanguageToggle } from "@/components/ui/language-toggle";
 import Link from "next/link";
-import { logout } from "./actions/auth";
+import { useRouter } from "next/navigation";
 import { ChristmasLights } from "@/components/ui/christmas-lights";
 
 type Challenge = {
@@ -25,6 +25,25 @@ type HomeClientProps = {
 
 export default function HomeClient({ sessionName, allChallenges, completedChallengeIds }: HomeClientProps) {
   const { t, language } = useLanguage();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("/api/auth/logout", {
+        method: "POST",
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.redirectTo) {
+          router.push(data.redirectTo);
+          router.refresh();
+        }
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
 
   return (
     <div className="min-h-screen p-8 font-sans z-10 relative text-christmas-cream">
@@ -52,7 +71,7 @@ export default function HomeClient({ sessionName, allChallenges, completedChalle
           </Link>
           <div className="h-6 w-px bg-christmas-green/20"></div>
           <LanguageToggle />
-          <button onClick={() => logout()} className="px-4 py-2 rounded-full text-sm font-bold text-christmas-red hover:bg-christmas-red/10 transition-all">
+          <button onClick={handleLogout} className="px-4 py-2 rounded-full text-sm font-bold text-christmas-red hover:bg-christmas-red/10 transition-all">
             {t.signOut}
           </button>
         </div>

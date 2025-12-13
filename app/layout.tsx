@@ -20,6 +20,7 @@ const mountains = Mountains_of_Christmas({
   variable: "--font-mountains",
   weight: ["400", "700"],
   subsets: ["latin"],
+  fallback: ["cursive", "system-ui"],
 });
 
 export const metadata: Metadata = {
@@ -34,6 +35,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@400;700&display=swap" rel="stylesheet" />
+      </head>
       <body
         className={clsx(
           geistSans.variable,
