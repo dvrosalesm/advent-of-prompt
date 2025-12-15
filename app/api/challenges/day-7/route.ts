@@ -294,12 +294,19 @@ Provide the sequence of moves (UP, DOWN, LEFT, RIGHT) to get from S to E:`,
     const validation = validateMoves(maze, moves);
     const score = validation.success ? 100 : 0;
 
-    // Save submission
+    // Save submission with maze data included
+    const submissionData = {
+      aiResponse: aiResponse,
+      maze: maze,
+      moves: moves,
+      path: validation.path,
+    };
+    
     await db.insert(submissions).values({
       userId: session.userId,
       challengeId: challenge.id,
       userPrompt,
-      aiResponse: aiResponse,
+      aiResponse: JSON.stringify(submissionData),
       outputType: "maze",
       score,
       isVerified: validation.success,

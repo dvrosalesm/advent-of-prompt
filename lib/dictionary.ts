@@ -32,6 +32,12 @@ export type Dictionary = {
   scoringChallenge: string;
   scoringLikes: string;
   scoringTotal: string;
+  loading: string;
+  tryAgain: string;
+  endOfGallery: string;
+  viewChallenge: string;
+  viewPrompt: string;
+  targetImage: string;
   login: {
     title: string;
     subtitle: string;
@@ -59,7 +65,7 @@ export const en: Dictionary = {
   failed: "FAILED",
   judgesFeedback: "Judge's Feedback",
   backToCalendar: "Back to Calendar",
-  communityGallery: "Community Gallery",
+  communityGallery: "AoP - Community Gallery",
   noSubmissions: "No submissions yet. Be the first to solve a challenge!",
   by: "by",
   like: "Like",
@@ -77,6 +83,12 @@ export const en: Dictionary = {
   scoringChallenge: "Each completed challenge gives you 0-100 points based on your result",
   scoringLikes: "Each ♥ like on your submissions gives +5 bonus points",
   scoringTotal: "Total Score = Sum of all challenge scores + bonus points",
+  loading: "Loading more...",
+  tryAgain: "Try Again",
+  endOfGallery: "You've reached the end of the gallery",
+  viewChallenge: "View challenge",
+  viewPrompt: "View prompt",
+  targetImage: "Target",
   login: {
     title: "Advent of Prompt",
     subtitle: "Enter your details to join the challenge.",
@@ -104,7 +116,7 @@ export const es: Dictionary = {
   failed: "FALLÓ",
   judgesFeedback: "Retroalimentación del Juez",
   backToCalendar: "Volver al Calendario",
-  communityGallery: "Galería de la Comunidad",
+  communityGallery: "AoP - Galería de la Comunidad",
   noSubmissions: "Aún no hay envíos. ¡Sé el primero en resolver un desafío!",
   by: "por",
   like: "Me gusta",
@@ -122,6 +134,12 @@ export const es: Dictionary = {
   scoringChallenge: "Cada desafío completado te da 0-100 puntos según tu resultado",
   scoringLikes: "Cada ♥ me gusta en tus envíos te da +5 puntos bonus",
   scoringTotal: "Puntaje Total = Suma de todos los puntajes + puntos bonus",
+  loading: "Cargando más...",
+  tryAgain: "Intentar de Nuevo",
+  endOfGallery: "Has llegado al final de la galería",
+  viewChallenge: "Ver desafío",
+  viewPrompt: "Ver prompt",
+  targetImage: "Objetivo",
   login: {
     title: "Adviento de Prompt",
     subtitle: "Ingresa tus datos para unirte al desafío.",

@@ -1,10 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --background: #2c4f2b;
-  /* Forest Green Base */
-  --foreground: #f9edd8;
-  /* Cream Text */
+  --background: #0a0a0f;
+  --foreground: #e4e4e7;
+  --cursor-bg: #0a0a0f;
+  --cursor-bg-secondary: #18181b;
+  --cursor-bg-tertiary: #27272a;
+  --cursor-border: #3f3f46;
+  --cursor-text: #e4e4e7;
+  --cursor-text-muted: #a1a1aa;
+  --cursor-accent: #71717a;
+  --cursor-accent-hover: #a1a1aa;
+  --cursor-success: #22c55e;
+  --cursor-error: #ef4444;
 }
 
 @theme inline {
@@ -13,51 +21,117 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  /* Custom Christmas Palette */
+  /* Cursor Theme Palette */
+  --color-cursor-bg: var(--cursor-bg);
+  --color-cursor-bg-secondary: var(--cursor-bg-secondary);
+  --color-cursor-bg-tertiary: var(--cursor-bg-tertiary);
+  --color-cursor-border: var(--cursor-border);
+  --color-cursor-text: var(--cursor-text);
+  --color-cursor-text-muted: var(--cursor-text-muted);
+  --color-cursor-accent: #71717a;
+  --color-cursor-accent-hover: #a1a1aa;
+  --color-cursor-success: var(--cursor-success);
+  --color-cursor-error: var(--cursor-error);
+
+  /* Keep Christmas colors for backward compatibility */
   --color-christmas-cream: #f9edd8;
   --color-christmas-green: #2c4f2b;
   --color-christmas-red: #b33626;
   --color-christmas-brown: #6b4423;
 }
 
-
-  :root {
-    --background: #f9edd8;
-    --foreground: #2c4f2b;
-  }
-
-
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--cursor-bg);
+  color: var(--cursor-text);
+  font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
 }
 
-@keyframes twinkle {
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
 
-  0%,
-  100% {
-    opacity: 1;
+/* Custom scrollbar styling - Cursor dark theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--cursor-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--cursor-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--cursor-text-muted);
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--cursor-border) var(--cursor-bg-secondary);
+}
+
+/* Glow effects */
+.glow-purple {
+  box-shadow: 0 0 20px rgba(113, 113, 122, 0.3), 0 0 40px rgba(113, 113, 122, 0.1);
+}
+
+.glow-purple-sm {
+  box-shadow: 0 0 10px rgba(113, 113, 122, 0.2);
+}
+
+
+/* Card hover effects */
+.card-hover {
+  transition: all 0.2s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(113, 113, 122, 0.1);
+}
+
+/* Animation keyframes */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(113, 113, 122, 0.3);
   }
-
   50% {
+    box-shadow: 0 0 30px rgba(113, 113, 122, 0.5);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% {
     opacity: 0.5;
   }
+  50% {
+    opacity: 1;
+  }
 }
 
-.animate-twinkle {
-  animation: twinkle 3s ease-in-out infinite;
+.animate-shimmer {
+  background: var(--cursor-bg-tertiary);
+  animation: shimmer 1.5s ease-in-out infinite;
 }
 
+/* Snowfall animation */
 @keyframes snowfall {
   0% {
     transform: translateY(-10vh) translateX(0);
     opacity: 1;
   }
-
   100% {
     transform: translateY(100vh) translateX(20px);
-    opacity: 0.8;
+    opacity: 0.3;
   }
 }
 
@@ -66,27 +140,4 @@ body {
   animation-name: snowfall;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
-  color: white;
-}
-
-/* Custom scrollbar styling */
-.scrollbar-thin {
-  scrollbar-width: thin;
-}
-
-.scrollbar-thin::-webkit-scrollbar {
-  width: 6px;
-}
-
-.scrollbar-thin::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.scrollbar-thin::-webkit-scrollbar-thumb {
-  background: rgba(44, 79, 43, 0.2);
-  border-radius: 3px;
-}
-
-.scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background: rgba(44, 79, 43, 0.4);
 }
